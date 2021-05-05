@@ -13,6 +13,7 @@ namespace Login_App
 {
     public partial class LoginForm : Form
     {
+        const string CONNECTIONTODB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\User\source\repos\Login App\Login App\Database1.mdf; Integrated Security = True";
         public LoginForm()
         {
             InitializeComponent();
@@ -27,7 +28,7 @@ namespace Login_App
         {
             if(isValid())
             {
-                using (SqlConnection db = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\User\source\repos\Login App\Login App\Database1.mdf; Integrated Security = True"))
+                using (SqlConnection db = new SqlConnection(CONNECTIONTODB))
                 {
                     db.Open();
                     SqlCommand cmd = new SqlCommand("select count(*) from [dbo].[LoginTable] where UserName=@UserName and Password=@Password", db);

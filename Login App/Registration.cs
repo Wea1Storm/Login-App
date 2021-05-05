@@ -13,6 +13,8 @@ namespace Login_App
 {
     public partial class Registration : Form
     {
+        const string CONNECTIONTODB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\User\source\repos\Login App\Login App\Database1.mdf; Integrated Security = True";
+
         public Registration()
         {
             InitializeComponent();
@@ -27,9 +29,9 @@ namespace Login_App
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
-            if (isValid())
+            if (isValid() && isLoginExist())
             {
-                using(SqlConnection db = new SqlConnection(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\User\source\repos\Login App\Login App\Database1.mdf; Integrated Security = True"))
+                using(SqlConnection db = new SqlConnection(CONNECTIONTODB))
                 {
                     string query = $"INSERT INTO LoginTable (UserName, Password) values('{txtName.Text.TrimStart()}', '{txtPassword.Text.TrimStart()}')";
 
@@ -67,6 +69,28 @@ namespace Login_App
             }
 
             return true;
+        }
+
+        private bool isLoginExist()
+        {
+            using (SqlConnection db = new SqlConnection(CONNECTIONTODB))
+            {
+                string query = $"SELECT * FROM LoginTable WHERE UserName = '{txtName.Text.TrimStart()}'";
+
+                SqlDataAdapter sda = new SqlDataAdapter(query, db);
+                DataTable dta = new DataTable();
+                sda.Fill(dta);
+
+                if(dta.Rows.Count > 0)
+                {
+                    MessageBox.Show("Error, this login already exist!", "Error!");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
     }
 }
