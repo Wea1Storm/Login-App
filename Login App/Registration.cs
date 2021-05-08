@@ -13,7 +13,7 @@ namespace Login_App
 {
     public partial class Registration : Form
     {
-        const string CONNECTIONTODB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\User\source\repos\Login App\Login App\Database1.mdf; Integrated Security = True";
+        const string CONNECTIONTODB = @"Data Source=192.168.1.107,1433\MSSQLSERVER1;Initial Catalog=USERSDB;User ID=user1;Password=user1";
 
         public Registration()
         {

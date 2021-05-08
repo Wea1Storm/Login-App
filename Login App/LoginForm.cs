@@ -12,8 +12,9 @@ using System.Windows.Forms;
 namespace Login_App
 {
     public partial class LoginForm : Form
-    {
-        const string CONNECTIONTODB = @"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = C:\Users\User\source\repos\Login App\Login App\Database1.mdf; Integrated Security = True";
+    { 
+        const string CONNECTIONTODB = @"Data Source=192.168.1.107,1433\MSSQLSERVER1;Initial Catalog=USERSDB;User ID=user1;Password=user1";
+
         public LoginForm()
         {
             InitializeComponent();
@@ -30,7 +31,9 @@ namespace Login_App
             {
                 using (SqlConnection db = new SqlConnection(CONNECTIONTODB))
                 {
+
                     db.Open();
+
                     SqlCommand cmd = new SqlCommand("select count(*) from [dbo].[LoginTable] where UserName=@UserName and Password=@Password", db);
                     cmd.Parameters.AddWithValue("@UserName", UserNameTxt.Text.Trim());
                     cmd.Parameters.AddWithValue("@Password", PasswordTxt.Text.Trim());
