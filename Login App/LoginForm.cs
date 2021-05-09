@@ -9,11 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Configuration;
+
 namespace Login_App
 {
     public partial class LoginForm : Form
-    { 
-        const string CONNECTIONTODB = @"Server = tcp:192.168.1.107,1433; Data Source=DESKTOP-CU65MP2\MSSQLSERVER1;Initial Catalog=USERSDB;User ID=user1;Password=user1";
+    {
+        string connectionString = ConfigurationManager.ConnectionStrings["UsersConnection"].ConnectionString;
+        
 
         public LoginForm()
         {
@@ -29,18 +32,17 @@ namespace Login_App
         {
             if(isValid())
             {
-                using (SqlConnection db = new SqlConnection(CONNECTIONTODB))
+                using (SqlConnection db = new SqlConnection(connectionString))
                 {
 
                     db.Open();
 
-                    SqlCommand cmd = new SqlCommand("select count(*) from [dbo].[LoginTable] where UserName=@UserName and Password=@Password", db);
+                    SqlCommand cmd = new SqlCommand("select count(*) from LoginTable where UserName=@UserName and Password=@Password", db);
                     cmd.Parameters.AddWithValue("@UserName", UserNameTxt.Text.Trim());
                     cmd.Parameters.AddWithValue("@Password", PasswordTxt.Text.Trim());
 
                     var isCorrectPassword = cmd.ExecuteScalar();
 
-                    /*string query = "SELECT * FROM LoginTable WHERE UserName = '" + UserNameTxt.Text.Trim() + "' AND Password = '" + PasswordTxt.Text.Trim() + "'";*/
 
                     if ((int)isCorrectPassword >= 1)
                     {
@@ -56,6 +58,11 @@ namespace Login_App
                     }                   
                 }
             }
+        }
+
+        private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            
         }
 
         private void ExitBtn_Click(object sender, EventArgs e)

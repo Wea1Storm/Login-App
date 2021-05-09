@@ -8,12 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace Login_App
 {
     public partial class Registration : Form
     {
-        const string CONNECTIONTODB = @"Server = tcp:192.168.1.107,1433; Data Source=DESKTOP-CU65MP2\MSSQLSERVER1;Initial Catalog=USERSDB;User ID=user1;Password=user1";
+        string connectionString = ConfigurationManager.ConnectionStrings["UsersConnection"].ConnectionString;
 
         public Registration()
         {
@@ -31,13 +32,17 @@ namespace Login_App
         {
             if (isValid() && isLoginExist())
             {
-                using(SqlConnection db = new SqlConnection(CONNECTIONTODB))
+                using(SqlConnection db = new SqlConnection(connectionString))
                 {
                     string query = $"INSERT INTO LoginTable (UserName, Password) values('{txtName.Text.TrimStart()}', '{txtPassword.Text.TrimStart()}')";
+
+                    db.Open();
 
                     SqlDataAdapter sda = new SqlDataAdapter(query, db);
                     DataTable dta = new DataTable();
                     sda.Fill(dta);
+
+                    db.Close();
 
                     MessageBox.Show("Registration Done!", "Success!");
                 }
@@ -73,13 +78,17 @@ namespace Login_App
 
         private bool isLoginExist()
         {
-            using (SqlConnection db = new SqlConnection(CONNECTIONTODB))
+            using (SqlConnection db = new SqlConnection(connectionString))
             {
                 string query = $"SELECT * FROM LoginTable WHERE UserName = '{txtName.Text.TrimStart()}'";
+
+                db.Open();
 
                 SqlDataAdapter sda = new SqlDataAdapter(query, db);
                 DataTable dta = new DataTable();
                 sda.Fill(dta);
+
+                db.Close();
 
                 if(dta.Rows.Count > 0)
                 {
