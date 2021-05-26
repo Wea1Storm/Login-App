@@ -45,6 +45,10 @@ namespace Login_App
                     db.Close();
 
                     MessageBox.Show("Registration Done!", "Success!");
+
+                    LoginForm lf = new LoginForm();
+                    this.Hide();
+                    lf.Show();
                 }
             }
         }

@@ -16,7 +16,6 @@ namespace Login_App
     public partial class LoginForm : Form
     {
         string connectionString = ConfigurationManager.ConnectionStrings["UsersConnection"].ConnectionString;
-        
 
         public LoginForm()
         {
@@ -36,8 +35,10 @@ namespace Login_App
                 {
 
                     db.Open();
+                    
 
                     SqlCommand cmd = new SqlCommand("select count(*) from LoginTable where UserName=@UserName and Password=@Password", db);
+
                     cmd.Parameters.AddWithValue("@UserName", UserNameTxt.Text.Trim());
                     cmd.Parameters.AddWithValue("@Password", PasswordTxt.Text.Trim());
 
@@ -46,9 +47,12 @@ namespace Login_App
 
                     if ((int)isCorrectPassword >= 1)
                     {
-                        Form1 fr = new Form1();
+                        GetRoot();
+                        User.UserName = UserNameTxt.Text.Trim();
+
+                        MainWindow main = new MainWindow();
                         this.Hide();
-                        fr.Show();
+                        main.Show();
                         db.Close();
                     }
                     else
@@ -83,6 +87,26 @@ namespace Login_App
                 return false;
             }
             return true;
+        }
+
+        private void GetRoot()
+        {
+            using(SqlConnection db = new SqlConnection(connectionString))
+            {
+                db.Open();
+                SqlCommand cmd = new SqlCommand($"SELECT Root FROM LoginTable WHERE UserName = '{UserNameTxt.Text.Trim()}' AND Password = '{PasswordTxt.Text.Trim()}'", db);
+                var Root = cmd.ExecuteScalar();
+
+                if(string.IsNullOrWhiteSpace(Root.ToString()) || Root.ToString() == null)
+                {
+                    User.Root = "user";
+                }
+                else
+                {
+                    User.Root = Root.ToString();
+                }
+                db.Close();
+            }
         }
 
         private void btnRegistration_Click(object sender, EventArgs e)
